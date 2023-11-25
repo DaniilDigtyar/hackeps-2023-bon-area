@@ -1,5 +1,5 @@
 import csv
-from datetime import datetime
+from datetime import datetime, timedelta
 from models import *
 
 from pathfinding.core.diagonal_movement import DiagonalMovement
@@ -130,6 +130,31 @@ def compute_path(permutations, product_picking_list):
             output.append({'x': y.x, 'y': y.y})
     return output
 
+def generate_output(ticket_id, path):
+    output = []
+    ticket_index = tickets_list.index(ticket_id)
+    ticket = tickets_list[ticket_index]
+    print(ticket)
+    step_seconds = int(ticket.customer_id.step_seconds)
+    enter_date_time = ticket.enter_date_time
+
+    iter_path = iter(path)
+
+    not_outside = True
+    time = enter_date_time
+
+    elem = next(iter_path, None)
+    while not_outside:
+        position = elem
+        print(position)
+        for second in range(0, step_seconds):
+            time += timedelta(seconds=1)
+            output.append([ticket.customer_id.customer_id, ticket.ticket_id,position['x'], position['y'], 0, time.strftime('%Y-%m-%d %H:%M:%S')])
+        elem = next(iter_path, None)
+        if elem is None:
+            not_outside = False
+    return output
+
 if __name__ == "__main__":
     article_list = load_articles()
     customer_list = load_customers()
@@ -139,3 +164,4 @@ if __name__ == "__main__":
     product_picking_list = get_product_picking_list("t11256883")
     permutations, distance = set_distance_map(product_picking_list)
     path = compute_path(permutations, product_picking_list)
+    output = generate_output("t11256883", path)
