@@ -22,3 +22,8 @@ venv\Scripts\Activate.ps1
 ```
 $ source myvenv/bin/activate
 ```
+
+### Install packages
+```
+pip install -r requirements.txt 
+```
