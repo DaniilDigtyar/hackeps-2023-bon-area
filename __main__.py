@@ -17,6 +17,8 @@ rows = 20
 cols = 47
 matrix = [[0 for _ in range(cols)] for _ in range(rows)]
 
+grid = Grid(0, 0)
+
 
 def load_articles():
     article_list = []
@@ -96,7 +98,12 @@ def set_distance_map(ticket_id):
             grid.cleanup()
 
         distanceMatrixArray.append(productDistances)
-    return distanceMatrixArray
+
+    distance_matrix = np.array(distanceMatrixArray)
+    startingPointPermutation = []
+    for i in range(len(product_picking_list)):
+        startingPointPermutation.append(i)
+    return solve_tsp_local_search(distance_matrix, startingPointPermutation)
 
 
 if __name__ == "__main__":
@@ -104,4 +111,4 @@ if __name__ == "__main__":
     customer_list = load_customers()
     tickets_list = load_tickets()
     load_matrix()
-    distanceMatrixArray = set_distance_map("t11256920")
+    permutation, distance = set_distance_map("t11256883")
