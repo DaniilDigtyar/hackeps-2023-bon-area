@@ -54,11 +54,23 @@ def load_matrix():
         reader = csv.reader(csvfile, delimiter=';', quotechar=' ')
         next(reader, None)  # skip header
         for row in reader:
-            matrix[int(row[1]) - 1][int(row[0]) - 1] = row[2]
+            matrix[int(row[1]) - 1][int(row[0]) - 1] = 1
+            if row[3] and row[4]:
+                article_index = article_list.index(Article(row[2]))
+                article_list[article_index].set_picking(row[3], row[4])
         return matrix
+
+
+def set_distance_map(ticket_id):
+    values = np.array(tickets_list)
+    tickets_indexes = np.where(values == ticket_id)[0]
+    product_picking_list = []
+    for index in tickets_indexes:
+        product_picking_list.append((tickets_list[index].article_id.picking_x, tickets_list[index].article_id.picking_y))
 
 if __name__ == "__main__":
     article_list = load_articles()
     customer_list = load_customers()
     tickets_list = load_tickets()
     load_matrix()
+    set_distance_map("t11256920")

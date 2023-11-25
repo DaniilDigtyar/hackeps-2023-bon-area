@@ -16,3 +16,9 @@ class Tickets:
         self.quantity = quantity
         self.ticket_id = ticket_id
 
+    def __eq__(self, other):
+        if isinstance(other, Tickets):
+            return self.ticket_id == other.ticket_id
+        if isinstance(other, str):
+            return self.ticket_id == other
+        raise Exception("Can't compare")

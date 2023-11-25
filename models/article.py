@@ -8,6 +8,8 @@ class Article:
     third_pick = 0
     fourth_pick = 0
     fifth_more_pick = 0
+    picking_x = 0
+    picking_y = 0
 
     def __init__(self, article_id, article_name="", first_pick=0, second_pick=0, third_pick=0, fourth_pick=0, fifth_more_pick=0):
         self.article_id = article_id
@@ -22,3 +24,7 @@ class Article:
         if not isinstance(other, Article):
             raise Exception("Can't compare to another class type")
         return self.article_id == other.article_id
+
+    def set_picking(self, x, y):
+        self.picking_x = x
+        self.picking_y = y
