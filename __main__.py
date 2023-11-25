@@ -73,13 +73,15 @@ def load_matrix():
         return matrix
 
 
-def set_distance_map(ticket_id):
+def get_product_picking_list(ticket_id):
     values = np.array(tickets_list)
     tickets_indexes = np.where(values == ticket_id)[0]
     product_picking_list = []
     for index in tickets_indexes:
         product_picking_list.append((int(tickets_list[index].article_id.picking_x), int(tickets_list[index].article_id.picking_y)))
+    return product_picking_list
 
+def set_distance_map(product_picking_list):
     grid = Grid(matrix=matrix)
 
     distanceMatrixArray = []
@@ -111,4 +113,5 @@ if __name__ == "__main__":
     customer_list = load_customers()
     tickets_list = load_tickets()
     load_matrix()
-    permutation, distance = set_distance_map("t11256883")
+    product_picking_list = get_product_picking_list("t11256883")
+    permutation, distance = set_distance_map(product_picking_list)
