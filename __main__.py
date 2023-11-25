@@ -127,15 +127,15 @@ def compute_path(permutations, product_picking_list):
         grid.cleanup()
     for x in path_list:
         for y in x:
-            output.append({'x': y.x, 'y': y.y})
+            output.append((y.x, y.y))
     return output
 
-def generate_output(ticket_id, path):
+def generate_output(ticket_id, path, product_picking_list):
     output = []
     ticket_index = tickets_list.index(ticket_id)
     ticket = tickets_list[ticket_index]
-    print(ticket)
     step_seconds = int(ticket.customer_id.step_seconds)
+    picking_offset = int(ticket.customer_id.picking_offset)
     enter_date_time = ticket.enter_date_time
 
     iter_path = iter(path)
@@ -146,10 +146,14 @@ def generate_output(ticket_id, path):
     elem = next(iter_path, None)
     while not_outside:
         position = elem
-        print(position)
-        for second in range(0, step_seconds):
-            time += timedelta(seconds=1)
-            output.append([ticket.customer_id.customer_id, ticket.ticket_id,position['x'], position['y'], 0, time.strftime('%Y-%m-%d %H:%M:%S')])
+        if position in product_picking_list:
+            for second in range(0, picking_offset):
+                time += timedelta(seconds=1)
+                output.append([ticket.customer_id.customer_id, ticket.ticket_id,position[0], position[1], 1, time.strftime('%Y-%m-%d %H:%M:%S')])
+        else:
+            for second in range(0, step_seconds):
+                time += timedelta(seconds=1)
+                output.append([ticket.customer_id.customer_id, ticket.ticket_id,position[0], position[1], 0, time.strftime('%Y-%m-%d %H:%M:%S')])
         elem = next(iter_path, None)
         if elem is None:
             not_outside = False
@@ -158,7 +162,7 @@ def generate_output(ticket_id, path):
 def create_csv_output(output):
     with open('output.csv', 'w', newline='') as csvfile:
         filewriter = csv.writer(csvfile, delimiter=';',
-                                quotechar=' ', quoting=csv.QUOTE_MINIMAL)
+                                quotechar='"', quoting=csv.QUOTE_MINIMAL)
         for row in output:
             filewriter.writerow(row)
 
@@ -171,5 +175,5 @@ if __name__ == "__main__":
     product_picking_list = get_product_picking_list("t11256883")
     permutations, distance = set_distance_map(product_picking_list)
     path = compute_path(permutations, product_picking_list)
-    output = generate_output("t11256883", path)
+    output = generate_output("t11256883", path, product_picking_list)
     create_csv_output(output)
