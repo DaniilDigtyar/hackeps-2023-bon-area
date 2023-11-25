@@ -1,5 +1,4 @@
-from customers import Customers
-from article import Article
+from models import *
 
 from datetime import datetime
 
