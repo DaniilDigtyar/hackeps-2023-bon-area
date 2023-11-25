@@ -20,6 +20,7 @@ matrix = [[0 for _ in range(cols)] for _ in range(rows)]
 grid = Grid(0, 0)
 
 start_point = (28, 19)
+end_point = (44, 19)
 
 def load_articles():
     article_list = []
@@ -108,11 +109,13 @@ def set_distance_map(product_picking_list):
 
 def compute_path(permutations, product_picking_list):
     product_picking_list.append(start_point)
+    product_picking_list.append(end_point)
     output = []
     path_list = []
     runs_list = []
     last = product_picking_list.index(start_point)
     permutations.insert(0, last)
+    permutations.append(product_picking_list.index(end_point))
     for permutation in permutations[1:]:
         start = grid.node(product_picking_list[last][0], product_picking_list[last][1])
         end = grid.node(product_picking_list[permutation][0], product_picking_list[permutation][1])
@@ -136,4 +139,3 @@ if __name__ == "__main__":
     product_picking_list = get_product_picking_list("t11256883")
     permutations, distance = set_distance_map(product_picking_list)
     path = compute_path(permutations, product_picking_list)
-
