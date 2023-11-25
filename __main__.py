@@ -2,6 +2,13 @@ import csv
 from datetime import datetime
 from models import *
 
+from pathfinding.core.diagonal_movement import DiagonalMovement
+from pathfinding.core.grid import Grid
+from pathfinding.finder.dijkstra import AStarFinder
+from python_tsp.exact import solve_tsp_dynamic_programming
+import numpy as np
+from python_tsp.heuristics import solve_tsp_local_search
+
 article_list = []
 customer_list = []
 ticket_list = []
@@ -9,6 +16,7 @@ ticket_list = []
 rows = 20
 cols = 47
 matrix = [[0 for _ in range(cols)] for _ in range(rows)]
+
 
 def load_articles():
     article_list = []
@@ -31,6 +39,7 @@ def load_customers():
             customer_list.append(customer)
         return customer_list
 
+
 def load_tickets():
     tickets_list = []
     with open('data/hackathon_tickets.csv') as csvfile:
@@ -49,6 +58,7 @@ def load_tickets():
             tickets_list.append(ticket)
         return tickets_list
 
+
 def load_matrix():
     with open('data/planogram_table.csv') as csvfile:
         reader = csv.reader(csvfile, delimiter=';', quotechar=' ')
@@ -66,11 +76,32 @@ def set_distance_map(ticket_id):
     tickets_indexes = np.where(values == ticket_id)[0]
     product_picking_list = []
     for index in tickets_indexes:
-        product_picking_list.append((tickets_list[index].article_id.picking_x, tickets_list[index].article_id.picking_y))
+        product_picking_list.append((int(tickets_list[index].article_id.picking_x), int(tickets_list[index].article_id.picking_y)))
+
+    grid = Grid(matrix=matrix)
+
+    distanceMatrixArray = []
+
+    for i in range(len(product_picking_list)):
+        productDistances = []
+        for x in range(len(product_picking_list)):
+            if i == x:
+                productDistances.append(0)
+                continue
+            start = grid.node(product_picking_list[i][0], product_picking_list[i][1])
+            end = grid.node(product_picking_list[x][0], product_picking_list[x][1])
+            finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
+            path, runs = finder.find_path(start, end, grid)
+            productDistances.append(len(path) - 1)
+            grid.cleanup()
+
+        distanceMatrixArray.append(productDistances)
+    return distanceMatrixArray
+
 
 if __name__ == "__main__":
     article_list = load_articles()
     customer_list = load_customers()
     tickets_list = load_tickets()
     load_matrix()
-    set_distance_map("t11256920")
+    distanceMatrixArray = set_distance_map("t11256920")
