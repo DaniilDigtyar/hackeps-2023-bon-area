@@ -68,7 +68,10 @@ def load_matrix():
         reader = csv.reader(csvfile, delimiter=';', quotechar=' ')
         next(reader, None)  # skip header
         for row in reader:
-            matrix[int(row[1]) - 1][int(row[0]) - 1] = 1
+            if row[2] == "paso" or row[2] == "paso-salida":
+                matrix[int(row[1]) - 1][int(row[0]) - 1] = 1
+            else:
+                matrix[int(row[1]) - 1][int(row[0]) - 1] = 0
             if row[3] and row[4]:
                 article_index = article_list.index(Article(row[2]))
                 article_list[article_index].set_picking(row[3], row[4])
@@ -172,6 +175,8 @@ if __name__ == "__main__":
     customer_list = load_customers()
     tickets_list = load_tickets()
     load_matrix()
+    for row in matrix:
+        print(' '.join(map(str, row)))
     grid = Grid(matrix=matrix)
     product_picking_list = get_product_picking_list("t11256883")
     permutations, distance = set_distance_map(product_picking_list)
