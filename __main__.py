@@ -19,6 +19,7 @@ matrix = [[0 for _ in range(cols)] for _ in range(rows)]
 
 grid = Grid(0, 0)
 
+start_point = (28, 19)
 
 def load_articles():
     article_list = []
@@ -106,10 +107,12 @@ def set_distance_map(product_picking_list):
     return solve_tsp_local_search(distance_matrix, startingPointPermutation)
 
 def compute_path(permutations, product_picking_list):
+    product_picking_list.append(start_point)
     output = []
     path_list = []
     runs_list = []
-    last = permutations[0]
+    last = product_picking_list.index(start_point)
+    permutations.insert(0, last)
     for permutation in permutations[1:]:
         start = grid.node(product_picking_list[last][0], product_picking_list[last][1])
         end = grid.node(product_picking_list[permutation][0], product_picking_list[permutation][1])
@@ -119,11 +122,9 @@ def compute_path(permutations, product_picking_list):
         runs_list.append(runs)
         last = permutation
         grid.cleanup()
-
     for x in path_list:
         for y in x:
             output.append({'x': y.x, 'y': y.y})
-
     return output
 
 if __name__ == "__main__":
