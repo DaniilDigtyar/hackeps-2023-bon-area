@@ -6,6 +6,10 @@ article_list = []
 customer_list = []
 ticket_list = []
 
+rows = 20
+cols = 47
+matrix = [[0 for _ in range(cols)] for _ in range(rows)]
+
 def load_articles():
     article_list = []
     with open('data/hackathon_article_picking_time.csv') as csvfile:
@@ -33,7 +37,6 @@ def load_tickets():
         reader = csv.reader(csvfile, delimiter=';', quotechar=' ')
         next(reader, None)  # skip header
         for row in reader:
-            print(row[0])
             enter_date_time = datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S')
 
             customer_index = customer_list.index(Customers(row[1]))
@@ -46,8 +49,16 @@ def load_tickets():
             tickets_list.append(ticket)
         return tickets_list
 
+def load_matrix():
+    with open('data/planogram_table.csv') as csvfile:
+        reader = csv.reader(csvfile, delimiter=';', quotechar=' ')
+        next(reader, None)  # skip header
+        for row in reader:
+            matrix[int(row[1]) - 1][int(row[0]) - 1] = row[2]
+        return matrix
 
 if __name__ == "__main__":
     article_list = load_articles()
     customer_list = load_customers()
     tickets_list = load_tickets()
+    load_matrix()
