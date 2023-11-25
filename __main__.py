@@ -155,6 +155,13 @@ def generate_output(ticket_id, path):
             not_outside = False
     return output
 
+def create_csv_output(output):
+    with open('output.csv', 'w', newline='') as csvfile:
+        filewriter = csv.writer(csvfile, delimiter=';',
+                                quotechar=' ', quoting=csv.QUOTE_MINIMAL)
+        for row in output:
+            filewriter.writerow(row)
+
 if __name__ == "__main__":
     article_list = load_articles()
     customer_list = load_customers()
@@ -165,3 +172,4 @@ if __name__ == "__main__":
     permutations, distance = set_distance_map(product_picking_list)
     path = compute_path(permutations, product_picking_list)
     output = generate_output("t11256883", path)
+    create_csv_output(output)
