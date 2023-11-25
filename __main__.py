@@ -149,11 +149,11 @@ def generate_output(ticket_id, path, product_picking_list):
         if position in product_picking_list:
             for second in range(0, picking_offset):
                 time += timedelta(seconds=1)
-                output.append([ticket.customer_id.customer_id, ticket.ticket_id,position[0], position[1], 1, time.strftime('%Y-%m-%d %H:%M:%S')])
+                output.append([ticket.customer_id.customer_id, ticket.ticket_id,position[0] +1, position[1] +1, 1, time.strftime('%Y-%m-%d %H:%M:%S')])
         else:
             for second in range(0, step_seconds):
                 time += timedelta(seconds=1)
-                output.append([ticket.customer_id.customer_id, ticket.ticket_id,position[0], position[1], 0, time.strftime('%Y-%m-%d %H:%M:%S')])
+                output.append([ticket.customer_id.customer_id, ticket.ticket_id,position[0] +1, position[1] +1, 0, time.strftime('%Y-%m-%d %H:%M:%S')])
         elem = next(iter_path, None)
         if elem is None:
             not_outside = False
@@ -163,6 +163,7 @@ def create_csv_output(output):
     with open('output.csv', 'w', newline='') as csvfile:
         filewriter = csv.writer(csvfile, delimiter=';',
                                 quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        filewriter.writerow(['customer_id','ticket_id','x','y','picking','x_y_date_time'])
         for row in output:
             filewriter.writerow(row)
 
