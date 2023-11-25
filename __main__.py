@@ -82,8 +82,6 @@ def get_product_picking_list(ticket_id):
     return product_picking_list
 
 def set_distance_map(product_picking_list):
-    grid = Grid(matrix=matrix)
-
     distanceMatrixArray = []
 
     for i in range(len(product_picking_list)):
@@ -107,11 +105,34 @@ def set_distance_map(product_picking_list):
         startingPointPermutation.append(i)
     return solve_tsp_local_search(distance_matrix, startingPointPermutation)
 
+def compute_path(permutations, product_picking_list):
+    output = []
+    path_list = []
+    runs_list = []
+    last = permutations[0]
+    for permutation in permutations[1:]:
+        start = grid.node(product_picking_list[last][0], product_picking_list[last][1])
+        end = grid.node(product_picking_list[permutation][0], product_picking_list[permutation][1])
+        finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
+        path, runs = finder.find_path(start, end, grid)
+        path_list.append(path)
+        runs_list.append(runs)
+        last = permutation
+        grid.cleanup()
+
+    for x in path_list:
+        for y in x:
+            output.append({'x': y.x, 'y': y.y})
+
+    return output
 
 if __name__ == "__main__":
     article_list = load_articles()
     customer_list = load_customers()
     tickets_list = load_tickets()
     load_matrix()
+    grid = Grid(matrix=matrix)
     product_picking_list = get_product_picking_list("t11256883")
-    permutation, distance = set_distance_map(product_picking_list)
+    permutations, distance = set_distance_map(product_picking_list)
+    path = compute_path(permutations, product_picking_list)
+
