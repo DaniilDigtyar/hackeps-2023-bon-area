@@ -74,7 +74,7 @@ def load_matrix():
                 matrix[int(row[1]) - 1][int(row[0]) - 1] = 0
             if row[3] and row[4]:
                 article_index = article_list.index(Article(row[2]))
-                article_list[article_index].set_picking(row[3], row[4])
+                article_list[article_index].set_picking(int(row[3])-1, int(row[4])-1)
         return matrix
 
 
@@ -119,6 +119,7 @@ def compute_path(permutations, product_picking_list):
     last = product_picking_list.index(start_point)
     permutations.insert(0, last)
     permutations.append(product_picking_list.index(end_point))
+
     for permutation in permutations[1:]:
         start = grid.node(product_picking_list[last][0], product_picking_list[last][1])
         end = grid.node(product_picking_list[permutation][0], product_picking_list[permutation][1])
@@ -175,8 +176,6 @@ if __name__ == "__main__":
     customer_list = load_customers()
     tickets_list = load_tickets()
     load_matrix()
-    for row in matrix:
-        print(' '.join(map(str, row)))
     grid = Grid(matrix=matrix)
     product_picking_list = get_product_picking_list("t11256883")
     permutations, distance = set_distance_map(product_picking_list)
